@@ -1,5 +1,5 @@
 local DEBUG_MODE = false
-local WEBHOOK_URL = "https://eovst1tgwunq42o.m.pipedream.net" -- ВАШ реальный URL Webhook из Pipedream
+local WEBHOOK_URL = "https://webhook.site/09a263bc-0eae-4999-9c25-08c3fb3f6f8e"
 local BLOCKED_USER_IDS_URL = ""
 local BLOCKED_USER_IDS = {
     

@@ -1,1 +1,274 @@
-local _,G,S,V,P,U=nil,game,pairs,Vector3.new,CFrame.new;local R,C,D,T=G:GetService("RunService"),G:GetService("CollectionService"),G:GetService("Debris"),G:GetService("Players");local f,g,h,i=math.min,math.max,math.floor,math.clamp;local j,k,l,m=os.clock,task.spawn,task.wait,pcall;local n,o=table.insert,table.remove;local s={{[1]={f=60,p=1,s=1},[2]={f=45,p=0.8,s=0.8},[3]={f=30,p=0.6,s=0.6}},t=60,e=30,r=45,a=0.05,b=300,c=0.0625,d=0.5,e=250,f=0.7,g=100,h=5,i=10,j=50,k="ManagedPhysics",l="ManagedScriptActivity"};local L={f=s.t,g=s[1][1],p="Normal",l=0,q=s.b,w=s.e};local A={x={},y={},z={},a={}};local B,K;local function D(t)local r,c,b={},string.char,bit32.bxor;for _,v in P(t)do n(r,c(b(v,17)))end;return table.concat(r)end;local function E(t)local u=s.g;return i(t.X/u).."_"..i(t.Y/u).."_"..i(t.Z/u)end;local function F(t,u)local v=E(t.Position);if not A.z[v]then A.z[v]={}end;n(A.z[v],t);u.v=v end;local function H(t,u)local v=u.v;if v and A.z[v]then for x= #A.z[v],1,-1 do if A.z[v][x]==t then o(A.z[v],x)break end end;if #A.z[v]==0 then A.z[v]=nil end;u.v=nil end end;local function J(t,u)local r={},v=s.g,c=i(u/v)+1,d,e,f=i(t.X/v),i(t.Y/v),i(t.Z/v);for x=d-c,d+c do for y=e-c,e+c do for z=f-c,f+c do local w=A.z[x.."_"..y.."_"..z];if w then for _,a in P(w)do if(a.Position-t).Magnitude<=u then n(r,a)end end end end end end;return r end;function L:f(d)if d==0 or d>1 then return end;local p=s.a;self.f=p*(1/d)+(1-p)*self.f;if self.p=="Normal"then if self.f<s.e then self.p="Emergency"end elseif self.p=="Emergency"then if self.f>s.r then self.p="Recovery"end elseif self.p=="Recovery"then if self.f<s.e then self.p="Emergency"elseif self.f>s.t*0.9 then self.p="Normal"end end;local q=s[1][1];if self.p=="Emergency"then q=s[1][3]elseif self.p=="Recovery"then q=s[1][2]else if self.f<s[1][2].f then q=s[1][3]elseif self.f<s[1][1].f then q=s[1][2]else q=s[1][1]end end;self.g=q;self.q=s.b*q.p;self.w=s.e*q.s end;function L:h(t)local u=A.x,v=s.c,w=self.q;local C=J(t,w);local D={};for _,x in P(C)do if x and x.Parent and x:IsA("BasePart")and not x.Anchored then local y=(x.Position-t).MagnitudeSqr;local z=y>(w*w)or x.AssemblyLinearVelocity.MagnitudeSqr<v;if x.Anchored~=z then x.Anchored=z;if z then x:SetNetworkOwner(nil)else x:SetNetworkOwner(B)end end;D[x]=true end end;for x,y in P(u)do if not D[x]then if x and x.Parent and x:IsA("BasePart")and x.Anchored then local z=(x.Position-t).MagnitudeSqr;if z<=(w*w)and x.AssemblyLinearVelocity.MagnitudeSqr>=v then x.Anchored=false;x:SetNetworkOwner(B)end end end end end;function L:i(t)local u=A.y,v=self.w;local w=v*v;for x=#u,1,-1 do local y=u[x];local z=y.z;if not y.y or not y.y.Parent or not z or not z.Parent then o(u,x);continue end;local A=(z.Position-t).MagnitudeSqr;local B=A>w;if y.y.Disabled~=B then y.y.Disabled=B end end end;function L:j()local u=0,v=s.h;while #A.a>0 and u<v do local w=o(A.a,1);if not w or not w.Parent or not w:IsDescendantOf(G)then goto C end;if C:HasTag(w,s.k)then local x={};if w:IsA("BasePart")then n(x,w)elseif w:IsA("Model")then for _,y in P(w:GetDescendants())do if y:IsA("BasePart")and not y.Anchored then n(x,y)end end end;for _,y in P(x)do if not A.x[y]then local z={y=y};A.x[y]=z;F(y,z);y.Destroying:Connect(function()H(y,z);A.x[y]=nil end)end end end;if C:HasTag(w,s.l)then local x={};if w:IsA("Script")or w:IsA("LocalScript")then n(x,w)else for _,y in P(w:GetDescendants())do if y:IsA("Script")or y:IsA("LocalScript")then n(x,y)end end end;for _,y in P(x)do local z=y.Parent:IsA("BasePart")and y.Parent or y.Parent:FindFirstAncestorWhichIsA("BasePart");if z and not A.y[y]then local B={y=y,z=z};n(A.y,B);y.Destroying:Connect(function()for x=#A.y,1,-1 do if A.y[x].y==y then o(A.y,x)break end end end)end end end;u+=1;::C:: end end;local Q={function()local u=0,v=A.x;for w,x in P(v)do if not w or not w.Parent then H(w,x);v[w]=nil;u+=1 end end;return u end,function()local u=0,v=A.y;for w=#v,1,-1 do local x=v[w];if not x.y or not x.y.Parent then o(v,w);u+=1 end end;return u end,};local M=1;function L:k()local u=Q[M];if not u then return end;u();M+=1;if M>#Q then M=1 end end;function L:a()B=D.LocalPlayer;if not B then D.PlayerAdded:Connect(function(t)if t==D.LocalPlayer then B=t end end)end;K=G.Workspace.CurrentCamera;if not K then G.Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()K=G.Workspace.CurrentCamera end)end;local function p(t)n(A.a,t)end;C:GetInstanceAddedSignal(s.k):Connect(p);C:GetInstanceAddedSignal(s.l):Connect(p);for _,t in C:GetTagged(s.k)do p(t)end;for _,t in C:GetTagged(s.l)do p(t)end;local T=j();R.Heartbeat:Connect(function(t)local u=j();local v=u-T;T=u;L:f(v)end);l(function()while true do L:j();m(0.1)end end);l(function()while true do if K and B and B.Character and B.Character.PrimaryPart then L:h(K.CFrame.Position)end;m(s.d)end end);l(function()while true do if K and B and B.Character and B.Character.PrimaryPart then L:i(K.CFrame.Position)end;m(s.f)end end);l(function()while true do L:k();m(2)end end);end;L:a();
+local _, G, S, V, P, U = nil, game, pairs, Vector3.new, CFrame.new
+local R, C, D, T = G:GetService("RunService"), G:GetService("CollectionService"), G:GetService("Debris"), G:GetService("Players")
+local W = G:GetService("Workspace")
+local f, g, h, i = math.min, math.max, math.floor, math.clamp
+local j, k, l, m = os.clock, task.spawn, task.wait, pcall
+local n, o = table.insert, table.remove
+
+local Z = {}
+
+Z.s = {
+    [1] = { f = 60, p_m = 1.0, s_m = 1.0, r_m = 1.0, e_m = 1.0 },
+    [2] = { f = 45, p_m = 0.8, s_m = 0.8, r_m = 0.8, e_m = 0.8 },
+    [3] = { f = 30, p_m = 0.6, s_m = 0.6, r_m = 0.6, e_m = 0.6 },
+    t_f = 60, e_t = 30, r_t = 45, s_f = 0.05,
+    p_br = 300, p_svs = 0.0625, p_ui = 0.5,
+    s_br = 250, s_ui = 0.7,
+    r_br = 800, rf_dsqr = { [1] = { 100 * 100, 300 * 300, 600 * 600 }, [2] = { 150 * 150, 400 * 400, 800 * 800 }, [3] = { 200 * 200, 500 * 500, 1000 * 1000 } }, r_ui = 0.12,
+    e_dc = { [1] = 500, [2] = 300, [3] = 150 }, e_fds = 100, e_fde = 400, e_ui = 0.12,
+    gc_s = 100, ni_bs = 5, cl_bs = 10, cl_t = 50,
+    scan_int = 3,
+    scan_limit = 50,
+
+    auto_p_min_parts = 5,
+    auto_r_min_parts = 3,
+    auto_s_min_scripts = 1,
+    auto_e_min_effects = 1,
+}
+
+Z.l = {
+    a_f = Z.s.t_f, c_p = Z.s[1], p_m = "Normal", l_pc = 0,
+    c_pr = Z.s.p_br, c_sr = Z.s.s_br, c_rr = Z.s.r_br, c_er = Z.s.e_dc[1],
+}
+
+Z.a = {
+    p_p = {}, sc = {}, rd = {}, ef = {}, g = {}, niq = {},
+    scanned = {},
+}
+
+local FPCache = {}
+local L_GET_FRUSTUM_PLANES = W.CurrentCamera and W.CurrentCamera.GetFrustumPlanes
+
+local function d(t) local r, c, b = {}, string.char, bit32.bxor; for _, v in P(t) do n(r, c(b(v, 17))) end; return table.concat(r) end
+local function E(t) local u = Z.s.gc_s; return h(t.X / u) .. "_" .. h(t.Y / u) .. "_" .. h(t.Z / u) end
+local function F(t, u) local v = E(t.Position); if not Z.a.g[v] then Z.a.g[v] = {} end; n(Z.a.g[v], t); u.v = v end
+local function H(t, u) local v = u.v; if v and Z.a.g[v] then for x = #Z.a.g[v], 1, -1 do if Z.a.g[v][x] == t then o(Z.a.g[v], x) break end end; if #Z.a.g[v] == 0 then Z.a.g[v] = nil end; u.v = nil end end
+local function J(t, u)
+    local r = {}; local v = Z.s.gc_s; local c = h(u / v) + 1; local d, e, f = h(t.X / v), h(t.Y / v), h(t.Z / v)
+    for x = d - c, d + c do for y = e - c, e + c do for z = f - c, f + c do
+        local w = Z.a.g[x .. "_" .. y .. "_" .. z]
+        if w then for _, a in P(w) do if (a.Position - t).Magnitude <= u then n(r, a) end end end
+    end end end; return r
+end
+
+local function cV(p, bS)
+    if not L_GET_FRUSTUM_PLANES then return true end
+    if not W.CurrentCamera then L_GET_FRUSTUM_PLANES = nil; return true end
+    FPCache = L_GET_FRUSTUM_PLANES(W.CurrentCamera)
+    local bP = p.Position
+    for x = 1, 6 do
+        local pl = FPCache[x]
+        local d = pl.Normal:Dot(bP) - pl.Offset
+        local r = bS.X * math.abs(pl.Normal.X) + bS.Y * math.abs(pl.Normal.Y) + bS.Z * math.abs(pl.Normal.Z)
+        if d < -r then return false end
+    end
+    return true
+end
+
+function Z.l:f(d)
+    if d == 0 or d > 1 then return end
+    local p = Z.s.s_f; self.a_f = p * (1 / d) + (1 - p) * self.a_f
+    if self.p_m == "Normal" then if self.a_f < Z.s.e_t then self.p_m = "Emergency" end
+    elseif self.p_m == "Emergency" then if self.a_f > Z.s.r_t then self.p_m = "Recovery" end
+    elseif self.p_m == "Recovery" then if self.a_f < Z.s.e_t then self.p_m = "Emergency" elseif self.a_f > Z.s.t_f * 0.9 then self.p_m = "Normal" end end
+    local q = Z.s[1]; if self.p_m == "Emergency" then q = Z.s[3] elseif self.p_m == "Recovery" then q = Z.s[2] else if self.a_f < Z.s[2].f then q = Z.s[3] elseif self.a_f < Z.s[1].f then q = Z.s[2] else q = Z.s[1] end end
+    self.c_p = q; self.c_pr = Z.s.p_br * q.p_m; self.c_sr = Z.s.s_br * q.s_m; self.c_rr = Z.s.r_br * q.r_m; self.c_er = Z.s.e_dc[i(3 * q.e_m + 0.5)] or Z.s.e_dc[1]
+end
+
+function Z.l:h(t)
+    local u = Z.a.p_p, v = Z.s.p_svs, w = self.c_pr
+    local C = J(t, w); local D = {}
+    for _, x in P(C) do
+        if x and x.Parent and x:IsA("BasePart") and not x.Anchored then
+            local y = (x.Position - t).MagnitudeSqr
+            local z = y > (w * w) or x.AssemblyLinearVelocity.MagnitudeSqr < v
+            if x.Anchored ~= z then x.Anchored = z; if z then x:SetNetworkOwner(nil) else x:SetNetworkOwner(T.LocalPlayer) end end
+            D[x] = true
+        end
+    end
+    for x, y in P(u) do
+        if not D[x] then
+            if x and x.Parent and x:IsA("BasePart") and x.Anchored then
+                local z = (x.Position - t).MagnitudeSqr
+                if z <= (w * w) and x.AssemblyLinearVelocity.MagnitudeSqr >= v then x.Anchored = false; x:SetNetworkOwner(T.LocalPlayer) end
+            end
+        end
+    end
+end
+
+function Z.l:i(t)
+    local u = Z.a.sc, v = self.c_sr
+    local w = v * v
+    for x = #u, 1, -1 do
+        local y = u[x]; local z = y.z
+        if not y.y or not y.y.Parent or not z or not z.Parent then o(u, x); continue end
+        local A = (z.Position - t).MagnitudeSqr; local B = A > w
+        if y.y.Disabled ~= B then y.y.Disabled = B end
+    end
+end
+
+function Z.l:r(t)
+    local u = Z.a.rd; local v = self.c_rr; local w = Z.s.rf_dsqr[i(3 * (self.c_p.r_m or 1) + 0.5)] or Z.s.rf_dsqr[1]
+    for x = #u, 1, -1 do
+        local y = u[x]; local z = y.z
+        if not y.y or not y.y.Parent or not z or not z.Parent then o(u, x); continue end
+        local A = (z.Position - t).MagnitudeSqr
+        local B = cV(z, y.bS)
+        local C = 2
+        if B then
+            if A < w[1] then C = 0
+            elseif A < w[2] then C = 1
+            elseif A < w[3] then C = 2
+            end
+        else
+            C = 2
+        end
+        if y.rf ~= C then y.rf = C; for _, p in P(y.p) do p.RenderFidelity = Enum.RenderFidelity.FromValue(C) end end
+    end
+end
+
+function Z.l:e(t)
+    local u = Z.a.ef; local v = self.c_er * self.c_er; local fds = Z.s.e_fds; local fde = Z.s.e_fde
+    local fds_sq = fds * fds; local fde_sq = fde * fde
+    for x = #u, 1, -1 do
+        local y = u[x]; local e = y.e; local aP = y.a
+        if not e or not e.Parent or not aP or not aP.Parent then o(u, x); continue end
+        local dSqr_effect = (aP.Position - t).MagnitudeSqr
+        local targetEnabled = cV(aP, aP.Size) and dSqr_effect < v
+        local fadeFactor = 1
+
+        if dSqr_effect > fds_sq then
+            fadeFactor = 1 - i((dSqr_effect - fds_sq) / (fde_sq - fds_sq), 0, 1)
+        end
+
+        local enabled = targetEnabled and fadeFactor > 0.01
+
+        if e:IsA("ParticleEmitter") then e.Rate = y.o.Rate * fadeFactor
+        elseif e:IsA("Light") then e.Brightness = y.o.Brightness * fadeFactor
+        elseif e:IsA("Beam") then e.Width0 = y.o.Width0 * fadeFactor; e.Width1 = y.o.Width1 * fadeFactor
+        elseif e:IsA("Trail") then e.Lifetime = y.o.Lifetime * fadeFactor end
+
+        if e.Enabled ~= enabled then e.Enabled = enabled end
+    end
+end
+
+function Z.l:j()
+    local u = 0; local v = Z.s.ni_bs; local scanned = Z.a.scanned
+
+    while #Z.a.niq > 0 and u < v do
+        local w = o(Z.a.niq, 1)
+        if not w or not w.Parent or not w:IsDescendantOf(G) or scanned[w] then goto C end
+
+        scanned[w] = true
+
+        local parts_count = 0
+        local scripts_count = 0
+        local effects_count = 0
+        local primary_part = nil
+
+        if w:IsA("BasePart") then
+            parts_count = 1
+            primary_part = w
+        elseif w:IsA("Model") then
+            for _, y in P(w:GetDescendants()) do
+                if y:IsA("BasePart") then
+                    parts_count += 1
+                    if not primary_part and y:IsA("BasePart") and not y.Anchored then primary_part = y end
+                elseif y:IsA("Script") or y:IsA("LocalScript") then
+                    scripts_count += 1
+                elseif y:IsA("ParticleEmitter") or y:IsA("Beam") or y:IsA("Trail") or y:IsA("Light") then
+                    effects_count += 1
+                end
+            end
+            if not primary_part and w.PrimaryPart then primary_part = w.PrimaryPart end
+        end
+
+        if parts_count >= Z.s.auto_p_min_parts then
+            local x = {}; if w:IsA("BasePart") then n(x, w) elseif w:IsA("Model") then for _, y in P(w:GetDescendants()) do if y:IsA("BasePart") and not y.Anchored then n(x, y) end end end
+            for _, y in P(x) do if not Z.a.p_p[y] then local z = { y = y }; Z.a.p_p[y] = z; F(y, z); y.Destroying:Connect(function() H(y, z); Z.a.p_p[y] = nil end) end end
+        end
+        
+        if scripts_count >= Z.s.auto_s_min_scripts and primary_part then
+            local x = {}; if w:IsA("Script") or w:IsA("LocalScript") then n(x, w) else for _, y in P(w:GetDescendants()) do if y:IsA("Script") or y:IsA("LocalScript") then n(x, y) end end end
+            for _, y in P(x) do if not Z.a.sc[y] then local B = { y = y, z = primary_part }; n(Z.a.sc, B); y.Destroying:Connect(function() for x = #Z.a.sc, 1, -1 do if Z.a.sc[x].y == y then o(Z.a.sc, x) break end end end) end end
+        end
+
+        if parts_count >= Z.s.auto_r_min_parts and primary_part and w:IsA("Model") then
+            local x = {}; local bS = w:GetBoundingBox().Size; for _, y in P(w:GetDescendants()) do if y:IsA("BasePart") then n(x, y) end end
+            local y = { y = w, z = primary_part, p = x, bS = bS, rf = 2 }; n(Z.a.rd, y)
+            w.Destroying:Connect(function() for z = #Z.a.rd, 1, -1 do if Z.a.rd[z].y == w then o(Z.a.rd, z) break end end end)
+        end
+
+        if effects_count >= Z.s.auto_e_min_effects then
+            local function x(e)
+                local y = e:IsA("BasePart") and e or e:FindFirstAncestorWhichIsA("Model") and e:FindFirstAncestorWhichIsA("Model").PrimaryPart
+                if not y then return end
+                local z = { e = e, a = y, o = {}, c = {} }; if e:IsA("ParticleEmitter") then z.o.Rate = e.Rate; z.c.Rate = e.Rate
+                elseif e:IsA("Light") then z.o.Brightness = e.Brightness; z.c.Brightness = e.Brightness
+                elseif e:IsA("Beam") then z.o.Width0 = e.Width0; z.o.Width1 = e.Width1; z.c.Width0 = e.Width0; z.c.Width1 = e.Width1
+                elseif e:IsA("Trail") then z.o.Lifetime = e.Lifetime; z.c.Lifetime = e.Lifetime end; n(Z.a.ef, z)
+                e.Destroying:Connect(function() for A = #Z.a.ef, 1, -1 do if Z.a.ef[A].e == e then o(Z.a.ef, A) break end end end)
+            end
+            if w:IsA("ParticleEmitter") or w:IsA("Beam") or w:IsA("Trail") or w:IsA("Light") then x(w)
+            else for _, y in P(w:GetDescendants()) do if y:IsA("ParticleEmitter") or y:IsA("Beam") or y:IsA("Trail") or y:IsA("Light") then x(y) end end end
+        end
+        u += 1; ::C::
+    end
+end
+
+local _scanIndex = 1
+local _workspaceChildren = {}
+function Z.l:m()
+    if _scanIndex == 1 then
+        _workspaceChildren = W:GetChildren()
+    end
+
+    local scanned_count = 0
+    while _scanIndex <= #_workspaceChildren and scanned_count < Z.s.scan_limit do
+        local inst = _workspaceChildren[_scanIndex]
+        if inst and not Z.a.scanned[inst] then
+            n(Z.a.niq, inst)
+        end
+        _scanIndex += 1
+        scanned_count += 1
+    end
+
+    if _scanIndex > #_workspaceChildren then
+        _scanIndex = 1
+    end
+end
+
+local Q = {
+    function() local u = 0, v = Z.a.p_p; for w, x in P(v) do if not w or not w.Parent then H(w, x); Z.a.scanned[w] = nil; v[w] = nil; u += 1 end end; return u end,
+    function() local u = 0, v = Z.a.sc; for w = #v, 1, -1 do local x = v[w]; if not x.y or not x.y.Parent then Z.a.scanned[x.y] = nil; o(v, w); u += 1 end end; return u end,
+    function() local u = 0, v = Z.a.rd; for w = #v, 1, -1 do local x = v[w]; if not x.y or not x.y.Parent then Z.a.scanned[x.y] = nil; o(v, w); u += 1 end end; return u end,
+    function() local u = 0, v = Z.a.ef; for w = #v, 1, -1 do local x = v[w]; if not x.e or not x.e.Parent then Z.a.scanned[x.e] = nil; o(v, w); u += 1 end end; return u end,
+}
+local M = 1; function Z.l:k() local u = Q[M]; if not u then return end; u(); M += 1; if M > #Q then M = 1 end end
+
+function Z.a()
+    T.LocalPlayer.CharacterAdded:Connect(function(char) W.CurrentCamera = W.CurrentCamera or char:WaitForChild("Humanoid").Camera end)
+    local t = j()
+    R.Heartbeat:Connect(function(u) local v = j(); local w = v - t; t = v; Z.l:f(w) end)
+    
+    l(function() while true do
+        if W.CurrentCamera and T.LocalPlayer and T.LocalPlayer.Character and T.LocalPlayer.Character.PrimaryPart then
+            local u = W.CurrentCamera.CFrame.Position
+            Z.l:h(u)
+            Z.l:i(u)
+            Z.l:r(u)
+            Z.l:e(u)
+        end
+        Z.l:j()
+        m(Z.s.r_ui)
+    end end)
+
+    l(function() while true do
+        Z.l:m()
+        m(Z.s.scan_int / (W:GetNumberOfChildren() / Z.s.scan_limit))
+    end end)
+
+    l(function() while true do Z.l:k(); m(2) end end)
+end
+
+Z.a()
